@@ -2,7 +2,8 @@ from scalar_fastapi import get_scalar_api_reference
 from fastapi import FastAPI, HTTPException, status, Depends
 from typing import Any
 from app.database.session import SessionDep, create_db_tables
-from sqlmodel import Session
+from app.database.models import ShipmentStatus
+from sqlmodel import Session, select, update
 from app.schemas import ShipmentCreate, ShipmentRead, ShipmentUpdate  # , ShipmentStatus
 from rich import panel, print
 
@@ -43,32 +44,42 @@ def submit_shipment(body: ShipmentCreate, session: SessionDep):
     return body_content
 
 
-# @app.get("/shipment/latest")
-# async def get_latest_shipment():  # -> dict[str, Any]:
-#     id = db.max_id()
-#     shipment = db.read_shipments(id)
-#     db.close()
-#     return shipment
+@app.get("/shipment/latest")
+async def get_latest_shipment(session: SessionDep):
+    from sqlalchemy import func
+
+    statement = select(func.max(Shipments.id))
+    id = session.exec(statement).first()
+    shipment = session.get(Shipments, id)
+    return shipment
 
 
-# @app.get("/shipment", response_model=ShipmentRead)
-# def get_shipment(id: int):  # -> ShipmentRead:
-#     shipment = db.read_shipments(id=id)
-#     db.close()
-#     if shipment is None:
-#         raise HTTPException(
-#             status_code=status.HTTP_404_NOT_FOUND,
-#             detail=f"The ID {id} you provided doesn't exist",
-#         )
-#     return shipment
+@app.get("/shipment", response_model=ShipmentRead)
+def get_shipment(id: int, session: SessionDep):
+    shipment = session.get(Shipments, id)
+    if shipment is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"The ID {id} you provided doesn't exist",
+        )
+    return shipment
 
 
-# @app.put("/shipment")
-# def shipment_update(id: int, shipment: ShipmentUpdate):  # -> dict[str, Any]:
-#     # shipments[id] = {"content": content, "weight": weight, "status": status}
-#     shipment = db.update_shipment(id=id, shipment=shipment)
-#     # db.close()
-#     return shipment
+@app.put("/shipment")
+def shipment_update(id: int, shipment: ShipmentUpdate, session: SessionDep):
+    thing = session.get(Shipments, id)
+    if thing is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"The ID {id} you provided doesn't exist",
+        )
+    # for key, value in shipment.model_dump(exclude_unset=True).items():
+    #     setattr(thing, key, value)
+    thing.status: ShipmentStatus = shipment.status
+    session.add(thing)
+    session.commit()
+    session.refresh(thing)
+    return thing
 
 
 # @app.patch("/shipment", response_model=ShipmentRead)
@@ -78,10 +89,14 @@ def submit_shipment(body: ShipmentCreate, session: SessionDep):
 #     return shipment
 
 
-# @app.delete("/shipment")
-# async def delete_shipment(id: int) -> dict[str, str]:
-#     db.delete_shipment(id=id)
-#     return {"Detail": f"Shipment with #{id} has been deleted Successfully"}
+@app.delete("/shipment")
+async def delete_shipment(id: int, session: SessionDep):
+    ship = session.get(Shipments, id)
+    sh = {**ship.model_dump()}
+    session.delete(session.get(Shipments, id))
+    session.commit()
+
+    return {"Detail": f"Shipment with #{id} has been deleted Successfully"}, sh
 
 
 @app.get("/scalar", include_in_schema=False)
