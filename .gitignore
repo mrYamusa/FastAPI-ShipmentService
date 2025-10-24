@@ -1,4 +1,4 @@
 __pycache__/
 *.py[cod]
-venv/
+fast_env/
 *.sqlite3
