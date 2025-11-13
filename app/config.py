@@ -13,6 +13,8 @@ class Databasesettings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
     POSTGRES_URL: str  # postgresql+asyncpg://username:password@localhost:5432/dbname
+    REDIS_HOST: str
+    REDIS_PORT: int
 
     @property
     def postgres_url(self) -> str:

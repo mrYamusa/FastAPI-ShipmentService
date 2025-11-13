@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Depends
 from app.api.schemas.seller import CreateSeller, SellerRead
-from app.api.dependencies import SellerDep
-from fastapi.security import OAuth2PasswordRequestForm
+from app.api.dependencies import SellerDep, get_access_token, SellerDep2
+from app.core.security import oauth2_scheme
+from app.utils import decode_token
+from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from typing import Annotated
 
 
@@ -19,3 +21,22 @@ async def login_seller(
     service: SellerDep, request_form: Annotated[OAuth2PasswordRequestForm, Depends()]
 ):
     return await service.token(request_form.username, request_form.password)
+
+
+from app.database.redis import add_to_blacklist
+
+
+@router.post("/logout")
+async def logout_seller(token_data: Annotated[dict, Depends(get_access_token)]):
+    await add_to_blacklist(token_data["jti"])
+    return {"message": "Logout successful"}
+
+
+# @router.post("/yoo")
+# async def joyride(token: Annotated[str, Depends(oauth2_scheme)]):
+#     data = decode_token(token=token)
+#     return {"message": "Token decoded successfully", "data": data}
+@router.post("/yoo")
+async def joyride(token: SellerDep2):
+    # data = decode_token(token=token)
+    return {"message": "Token decoded successfully"}

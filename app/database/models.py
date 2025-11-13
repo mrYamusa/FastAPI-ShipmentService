@@ -11,6 +11,15 @@ class ShipmentStatus(str, Enum):
     delivered = "Delivered"
 
 
+class Role(str, Enum):
+    seller = "Seller"
+    costumer = "Costumer"
+    super_admin = "SuperAdmin"
+    admin1 = "Admin1"
+    admin2 = "Admin2"
+    admin3 = "Admin3"
+
+
 class Shipments(SQLModel, table=True):
     __tablename__ = "Shipments"
     id: int = Field(primary_key=True)
@@ -27,3 +36,4 @@ class Sellers(SQLModel, table=True):
     name: str
     email: EmailStr
     password_hash: str
+    role: Role = Field(default=Role.seller)

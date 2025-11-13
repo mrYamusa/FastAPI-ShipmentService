@@ -4,9 +4,7 @@ from app.api.schemas.seller import CreateSeller
 from passlib.context import CryptContext
 from sqlalchemy import select
 from fastapi import HTTPException, status
-import jwt
-from app.config import token_settings
-from datetime import datetime, timedelta
+from app.utils import encode_token
 
 password_context = CryptContext(schemes=["sha256_crypt"])
 
@@ -38,12 +36,12 @@ class SellerService:
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="The Email or Password was not found",
             )
-        token = jwt.encode(
-            payload={
-                "user": {"seller_name": seller.name, "seller_email": seller.email},
-                "exp": datetime.utcnow() + timedelta(minutes=token_settings.EXP_TIME),
+        token = encode_token(
+            data={
+                "user": {
+                    "seller_name": seller.name,
+                    "seller_id": seller.id,
+                },
             },
-            key=token_settings.SECRET_KEY,
-            algorithm=token_settings.HASH_ALGO,
         )
         return {"access_token": token, "type": "JWT"}

@@ -7,6 +7,7 @@ from app.api.schemas.shipment import (
     ShipmentRead,
     ShipmentUpdate,
 )  # , ShipmentStatus
+from app.api.dependencies import SellerDep2
 
 # from pydantic import BaseModel
 from app.database.models import Shipments
@@ -29,8 +30,31 @@ async def submit_shipment(body: ShipmentCreate, service: ServiceDep):
     return shipment_instance
 
 
+# @router.get("/latest")
+# async def get_latest_shipment(session: SessionDep, token: str = Depends(oauth2_scheme)):
+#     data = decode_token(token=token)
+#     if data in ["Token has expired", "Invalid token"]:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail=data,
+#         )
+#     else:
+#         from sqlalchemy import func
+
+#         statement = select(func.max(Shipments.id))
+#         result = await session.execute(statement)
+#         id = result.scalar()  # gets the single value from the result
+#         shipment = await session.get(Shipments, id)
+#         return shipment
+
+
 @router.get("/latest")
-async def get_latest_shipment(session: SessionDep):
+async def get_latest_shipment(session: SessionDep, user: SellerDep2):
+    from rich import print, panel
+
+    a = f"{user}"
+    print(panel.Panel(a, style="green"))
+
     from sqlalchemy import func
 
     statement = select(func.max(Shipments.id))
