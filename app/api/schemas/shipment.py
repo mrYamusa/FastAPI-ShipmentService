@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 from random import randint
 from enum import Enum
 from datetime import datetime, timedelta
+from app.api.schemas.seller import BaseSeller
 
 
 def random_destination():
@@ -31,6 +32,7 @@ class ShipmentRead(BaseShipments):
     status: ShipmentStatus = Field(
         default=ShipmentStatus.placed, description="Shipment Status", max_length=20
     )
+    seller: BaseSeller = Field(description="Seller details")
 
 
 class Order(BaseModel):

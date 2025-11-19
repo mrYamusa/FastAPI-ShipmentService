@@ -20,6 +20,9 @@ def encode_token(data: dict, expiry=timedelta(minutes=token_settings.EXP_TIME)) 
     return token
 
 
+from fastapi import HTTPException, status
+
+
 async def decode_token(token: Annotated[str, Depends(oauth2_scheme)]):
     try:
         data = jwt.decode(
@@ -28,9 +31,13 @@ async def decode_token(token: Annotated[str, Depends(oauth2_scheme)]):
             algorithms=token_settings.HASH_ALGO,
         )
     except jwt.ExpiredSignatureError:
-        return "Token has expired"
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired"
+        )
     except jwt.InvalidTokenError:
-        return "Invalid token"
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
+        )
 
     print("Done decoding")
     return data

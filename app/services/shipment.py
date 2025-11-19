@@ -36,8 +36,8 @@ class ShipmentService:
         await self.session.commit()
         await self.session.refresh(shipment)
 
-    async def delete(self, id):
-        item = self.get(id)
+    async def delete(self, id, database_table):
+        item = await self.get(id, database_table)
         await self.session.delete(item)
         await self.session.commit()
         return {"Detail": f"Shipment with #{id} has been deleted Successfully"}

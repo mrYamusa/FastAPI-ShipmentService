@@ -8,24 +8,27 @@ from app.api.schemas.shipment import (
     ShipmentUpdate,
 )  # , ShipmentStatus
 from app.api.dependencies import SellerDep2
+from rich import print, panel
 
 # from pydantic import BaseModel
 from app.database.models import Shipments
 
 # from app.services.shipment import ShipmentService
-from app.api.dependencies import ServiceDep
+from app.api.dependencies import ServiceDep, SellerDep2
 
 router = APIRouter(prefix="/shipment", tags=["Shipments"])
 
 
-@router.post("/create")  # , response_model=ShipmentCreate)
-async def submit_shipment(body: ShipmentCreate, service: ServiceDep):
+@router.post("/create", response_model=ShipmentRead)  # , response_model=ShipmentCreate)
+async def submit_shipment(body: ShipmentCreate, service: ServiceDep, token: SellerDep2):
     if body.weight > 25:
         raise HTTPException(
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
             detail="Weight is above shipment limits! \nMaximum weight limit is 25",
         )
     shipment_instance = Shipments(**body.model_dump(exclude_none=False))
+    print(panel.Panel(f"{token.id}", style="blue"))
+    shipment_instance.seller_id = token.id
     await service.post(shipment_instance)
     return shipment_instance
 
@@ -104,5 +107,5 @@ async def delete_shipment(id: int, service: ServiceDep):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
         )
-    return await service.delete(id=id)
+    return await service.delete(id=id, database_table=Shipments)
     # return {"Detail": f"Shipment with #{id} has been deleted Successfully"}

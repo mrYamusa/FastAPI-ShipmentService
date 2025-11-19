@@ -45,12 +45,16 @@ SellerDep = Annotated[SellerService, Depends(get_seller_service)]
 
 async def get_access_token(token: Annotated[str, Depends(oauth2_scheme)]):
     data = await decode_token(token)
+    print(data)
     if data is None or await check_if_blacklisted(data["jti"]):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token maybe invalid or expired",
         )
     return data
+
+
+from uuid import UUID
 
 
 async def get_user(
@@ -61,8 +65,8 @@ async def get_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token expired or Invalid Token",
         )
-    print(token_data["user"]["seller_id"])
-    user = await session.get(Sellers, token_data["user"]["seller_id"])
+    print(str(token_data["user"]["seller_id"]))
+    user = await session.get(Sellers, UUID(token_data["user"]["seller_id"]))
     return user
 
 

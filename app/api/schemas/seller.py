@@ -21,5 +21,9 @@ class CreateSeller(BaseSeller):
     role: Role = Field(default=Role.seller)
 
 
+from app.database.models import Shipments
+
+
 class SellerRead(BaseSeller):
     role: Role = Field(default=Role.seller)
+    shipment: list[Shipments] = Field(default=[], description="List of shipment IDs")

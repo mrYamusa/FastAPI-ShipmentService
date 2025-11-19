@@ -40,3 +40,12 @@ async def logout_seller(token_data: Annotated[dict, Depends(get_access_token)]):
 async def joyride(token: SellerDep2):
     # data = decode_token(token=token)
     return {"message": "Token decoded successfully"}
+
+
+from app.api.schemas.seller import SellerRead
+from app.api.dependencies import get_user
+
+
+@router.get("/myinfo", response_model=SellerRead)
+async def my_info(user: Annotated[SellerRead, Depends(get_user)]):
+    return user

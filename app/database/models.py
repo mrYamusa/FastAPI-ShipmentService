@@ -2,6 +2,7 @@ from sqlmodel import SQLModel, Field, Relationship, Column
 from datetime import datetime
 from enum import Enum
 from pydantic import EmailStr
+from sqlalchemy.dialects import postgresql
 
 
 class ShipmentStatus(str, Enum):
@@ -19,27 +20,49 @@ class Role(str, Enum):
     admin2 = "Admin2"
     admin3 = "Admin3"
 
+
 from uuid import uuid4, UUID
+
+
 class Shipments(SQLModel, table=True):
     __tablename__ = "Shipments"
     # id: int = Field(primary_key=True)
-    id: UUID = Field(sa_column=Column())
+    id: UUID = Field(
+        sa_column=Column(
+            postgresql.UUID,
+            primary_key=True,
+            default=uuid4,
+        )
+    )
     content: str
     weight: float = Field(le=25)
     status: ShipmentStatus = Field(default=ShipmentStatus.placed)
     estimated_delivery: datetime
     destination: int
 
-    seller_id: int = Field(foreign_key="sellers.id")
-    seller: "Sellers" = Relationship(back_populates="shipment", sa_relationship_kwargs={"lazy": "selectin"})
+    seller_id: UUID = Field(foreign_key="Sellers.id")  # __tablename__ of Sellers table
+    seller: "Sellers" = Relationship(
+        back_populates="shipment", sa_relationship_kwargs={"lazy": "selectin"}
+    )
 
 
 class Sellers(SQLModel, table=True):
-    __tablename__ = "Sellers"
-    id: int = Field(default=None, primary_key=True)
+    __tablename__ = (
+        "Sellers"  # used in foreign key reference for seller_id in Shipments
+    )
+    # id: int = Field(default=None, primary_key=True)
+    id: UUID = Field(
+        sa_column=Column(
+            postgresql.UUID,
+            default=uuid4,
+            primary_key=True,
+        )
+    )
     name: str
     email: EmailStr
     password_hash: str
     role: Role = Field(default=Role.seller)
 
-    shipment: list[Shipments] = Relationship(back_populates="seller", sa_relationship_kwargs={"lazy": "selectiin"})
+    shipment: list[Shipments] = Relationship(
+        back_populates="seller", sa_relationship_kwargs={"lazy": "selectin"}
+    )

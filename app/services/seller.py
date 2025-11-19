@@ -40,7 +40,7 @@ class SellerService:
             data={
                 "user": {
                     "seller_name": seller.name,
-                    "seller_id": seller.id,
+                    "seller_id": str(seller.id),
                 },
             },
         )

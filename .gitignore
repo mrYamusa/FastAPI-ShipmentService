@@ -3,3 +3,6 @@ __pycache__/
 fast_env/
 *.sqlite3
 .env
+.mypy_cache/
+*.stackdump
+*.db
