@@ -35,17 +35,25 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint("id"),
     )
     op.add_column(
-        "Sellers", sa.Column("created_at", postgresql.TIMESTAMP(), nullable=True)
+        "Sellers",
+        sa.Column(
+            "created_at", postgresql.TIMESTAMP(), nullable=False, server_default="now()"
+        ),
     )
     op.add_column(
-        "Shipments", sa.Column("created_at", postgresql.TIMESTAMP(), nullable=True)
+        "Shipments",
+        sa.Column(
+            "created_at", postgresql.TIMESTAMP(), nullable=False, server_default="now()"
+        ),
     )
     op.add_column(
-        "Shipments", sa.Column("delivery_partner_id", sa.Uuid(), nullable=False)
+        "Shipments", sa.Column("delivery_partner_id", sa.Uuid(), nullable=True)
     )
     op.create_foreign_key(
         None, "Shipments", "DeliveryPartners", ["delivery_partner_id"], ["id"]
     )
+    op.alter_column("Shipments", "created_at", nullable=False, server_default=None)
+    op.alter_column("Sellers", "created_at", nullable=False, server_default=None)
     # ### end Alembic commands ###
 
 
