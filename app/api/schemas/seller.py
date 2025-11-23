@@ -14,6 +14,7 @@ class Role(str, Enum):
 class BaseSeller(BaseModel):
     name: str
     email: EmailStr
+    address: int
 
 
 class CreateSeller(BaseSeller):

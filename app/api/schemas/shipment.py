@@ -42,7 +42,7 @@ class Order(BaseModel):
 
 
 class ShipmentCreate(BaseShipments):
-    order: Order | None = Field(default=None, description="Order details")
+    # order: Order | None = Field(default=None, description="Order details")
     estimated_delivery: datetime | None = Field(
         default_factory=delivery_date, description="Estimated delivery date"
     )
