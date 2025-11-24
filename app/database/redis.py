@@ -2,10 +2,10 @@ from redis.asyncio import Redis
 from app.config import database_settings
 import os
 
-redis_url = Redis(os.getenv("REDIS_URL"))
+redis_url = os.getenv("REDIS_URL")
 
 if redis_url:
-    _token_blacklist = Redis.from_url(os.getenv("REDIS_URL"))
+    _token_blacklist = Redis.from_url(redis_url)
 else:
     _token_blacklist = Redis(
         host=database_settings.REDIS_HOST,
