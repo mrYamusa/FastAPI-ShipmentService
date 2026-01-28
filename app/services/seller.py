@@ -5,43 +5,18 @@ from passlib.context import CryptContext
 from sqlalchemy import select
 from fastapi import HTTPException, status
 from app.utils import encode_token
+from .user import UserService
 
 password_context = CryptContext(schemes=["sha256_crypt"])
 
 
-class SellerService:
+class SellerService(UserService):
     def __init__(self, session: AsyncSession):
-        self.session = session
+        super().__init__(session=session, model=Sellers)
 
     async def create_seller(self, seller: CreateSeller) -> Sellers:
-        new_seller = Sellers(
-            **seller.model_dump(exclude={"password"}),
-            password_hash=password_context.hash(seller.password),
-        )
-
-        self.session.add(new_seller)
-        await self.session.commit()
-        await self.session.refresh(new_seller)
-        return new_seller
+        return await self._add_user(seller)
 
     async def token(self, email, password):
-        result = await self.session.execute(
-            select(Sellers).where(Sellers.email == email)
-        )
-        seller = result.scalar()
-        if seller is None or not password_context.verify(
-            password, seller.password_hash
-        ):
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="The Email or Password was not found",
-            )
-        token = encode_token(
-            data={
-                "user": {
-                    "seller_name": seller.name,
-                    "seller_id": str(seller.id),
-                },
-            },
-        )
+        token: str = await self._generate_token(email=email, password=password)
         return {"access_token": token, "type": "JWT"}

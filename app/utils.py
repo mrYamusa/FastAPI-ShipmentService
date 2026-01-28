@@ -1,4 +1,4 @@
-from app.core.security import oauth2_scheme
+from app.core.security import oauth2_scheme_seller
 from typing import Annotated
 from fastapi import Depends
 import jwt
@@ -23,7 +23,7 @@ def encode_token(data: dict, expiry=timedelta(minutes=token_settings.EXP_TIME)) 
 from fastapi import HTTPException, status
 
 
-async def decode_token(token: Annotated[str, Depends(oauth2_scheme)]):
+async def decode_token(token: Annotated[str, Depends(oauth2_scheme_seller)]):
     try:
         data = jwt.decode(
             jwt=token,
@@ -39,7 +39,7 @@ async def decode_token(token: Annotated[str, Depends(oauth2_scheme)]):
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
         )
 
-    print("Done decoding")
+    # print("Done decoding")
     return data
 
 

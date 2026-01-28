@@ -1,3 +1,4 @@
+from uuid import UUID
 from fastapi import APIRouter, HTTPException, status
 from app.database.session import SessionDep
 from app.database.models import ShipmentStatus
@@ -26,11 +27,7 @@ async def submit_shipment(body: ShipmentCreate, service: ServiceDep, token: Sell
             status_code=status.HTTP_406_NOT_ACCEPTABLE,
             detail="Weight is above shipment limits! \nMaximum weight limit is 25",
         )
-    shipment_instance = Shipments(**body.model_dump(exclude_none=False))
-    print(panel.Panel(f"{token.id}", style="blue"))
-    shipment_instance.seller_id = token.id
-    await service.post(shipment_instance)
-    return shipment_instance
+    return await service.add(body, seller=token)
 
 
 # @router.get("/latest")
@@ -68,8 +65,8 @@ async def get_latest_shipment(session: SessionDep, user: SellerDep2):
 
 
 @router.get("/item", response_model=ShipmentRead)
-async def get_shipment(id: int, service: ServiceDep):
-    shipment = await service.get(id, Shipments)
+async def get_shipment(id: UUID, service: ServiceDep):
+    shipment = await service.get(id)
     if shipment is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -79,18 +76,8 @@ async def get_shipment(id: int, service: ServiceDep):
 
 
 @router.put("/update")
-async def shipment_update(id: int, shipment: ShipmentUpdate, service: ServiceDep):
-    thing = await service.get(id, Shipments)
-    if thing is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"The ID {id} you provided doesn't exist",
-        )
-    # for key, value in shipment.model_dump(exclude_unset=True).items():
-    #     setattr(thing, key, value)
-    thing.status = ShipmentStatus(shipment.status.value)
-    await service.post(thing)
-    return thing
+async def shipment_update(id: UUID, shipment: ShipmentUpdate, service: ServiceDep):
+    return await service.update(id, shipment)
 
 
 # @router.patch("/shipment", response_model=ShipmentRead)
@@ -101,11 +88,6 @@ async def shipment_update(id: int, shipment: ShipmentUpdate, service: ServiceDep
 
 
 @router.delete("/delete")
-async def delete_shipment(id: int, service: ServiceDep):
-    shipment = await service.get(id, Shipments)
-    if not shipment:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Shipment not found"
-        )
-    return await service.delete(id=id, database_table=Shipments)
+async def delete_shipment(id: UUID, service: ServiceDep):
+    return await service.delete(id=id)
     # return {"Detail": f"Shipment with #{id} has been deleted Successfully"}
