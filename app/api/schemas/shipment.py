@@ -1,8 +1,8 @@
 from pydantic import BaseModel, Field
 from random import randint
-from enum import Enum
 from datetime import datetime, timedelta
 from app.api.schemas.seller import BaseSeller
+from app.database.models import ShipmentEvent, ShipmentStatus
 
 
 def random_destination():
@@ -11,13 +11,6 @@ def random_destination():
 
 def delivery_date(est_time: int = 3):
     return datetime.utcnow() + timedelta(est_time)
-
-
-class ShipmentStatus(str, Enum):
-    placed = "Placed!"
-    in_transit = "In Transit"
-    out_for_delivery = "Out for Delivery"
-    delivered = "Delivered"
 
 
 class BaseShipments(BaseModel):
@@ -29,9 +22,7 @@ class BaseShipments(BaseModel):
 
 
 class ShipmentRead(BaseShipments):
-    status: ShipmentStatus = Field(
-        default=ShipmentStatus.placed, description="Shipment Status", max_length=20
-    )
+    timeline: list[ShipmentEvent] = Field(description="Shipment timeline events")
     seller: BaseSeller = Field(description="Seller details")
 
 
@@ -52,15 +43,24 @@ class ShipmentCreate(BaseShipments):
 
 
 class ShipmentUpdate(BaseModel):
+    location: int | None = Field(
+        description="Current location of the shipment", default=None
+    )
+    description: str | None = Field(
+        max_length=100, description="Description of the shipment status", default=None
+    )
     content: str | None = Field(
         max_length=20, default=None
     )  # default None -> makes the field not required
-    status: ShipmentStatus = Field(
-        default=ShipmentStatus.placed, description="Shipment Status", max_length=20
+    status: ShipmentStatus | None = Field(
+        default=None, description="Shipment Status", max_length=20
     )
     weight: float | None = Field(
         le=25,
         gt=0,
         description="Weight of Package in Kgs",
         default=None,
+    )
+    estimated_delivery: datetime | None = Field(
+        description="Estimated delivery date", default=None
     )

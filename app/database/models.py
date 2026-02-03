@@ -17,6 +17,7 @@ class ShipmentStatus(str, Enum):
     in_transit = "In Transit"
     out_for_delivery = "Out for Delivery"
     delivered = "Delivered"
+    cancelled = "Cancelled!"
 
 
 class Role(str, Enum):
@@ -63,6 +64,13 @@ class Shipments(SQLModel, table=True):
     timeline: list["ShipmentEvent"] = Relationship(
         back_populates="shipment", sa_relationship_kwargs={"lazy": "selectin"}
     )
+
+    @property
+    def status(self):
+        if not self.timeline:
+            return None
+        self.timeline.sort(key=lambda item: item.created_at)
+        return self.timeline[-1].status
 
 
 # from sqlalchemy.dialects import postgresql
@@ -162,7 +170,7 @@ class DeliveryPartners(User, table=True):
         return [
             shipment
             for shipment in self.shipments
-            if shipment.status != ShipmentStatus.delivered
+            if shipment.status != ShipmentStatus.delivered or ShipmentStatus.cancelled
         ]
 
     @property

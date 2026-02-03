@@ -8,14 +8,14 @@ from app.api.schemas.shipment import (
     ShipmentRead,
     ShipmentUpdate,
 )  # , ShipmentStatus
-from app.api.dependencies import SellerDep2
+from app.api.dependencies import SellerDep2, PartnerDep2
 from rich import print, panel
 
 # from pydantic import BaseModel
 from app.database.models import Shipments
 
 # from app.services.shipment import ShipmentService
-from app.api.dependencies import ServiceDep, SellerDep2
+from app.api.dependencies import ServiceDep, SellerDep2, PartnerDep
 
 router = APIRouter(prefix="/shipment", tags=["Shipments"])
 
@@ -75,19 +75,27 @@ async def get_shipment(id: UUID, service: ServiceDep):
     return shipment
 
 
-@router.put("/update")
-async def shipment_update(id: UUID, shipment: ShipmentUpdate, service: ServiceDep):
-    return await service.update(id, shipment)
+# @router.put("/update")
+# async def shipment_update(id: UUID, shipment: ShipmentUpdate, service: ServiceDep):
+# return await service.update(id, shipment)
 
 
-# @router.patch("/shipment", response_model=ShipmentRead)
-# async def shipment_patch(id: int, body: ShipmentUpdate):  # dict[str, ShipmentStatus]):
-#     shipment = db.update_shipment(id=id, shipment=body)
-#     db.close()
-#     return shipment
+@router.patch("/", response_model=ShipmentRead)
+async def shipment_patch(
+    id: UUID, body: ShipmentUpdate, service: ServiceDep, partner: PartnerDep2
+):
+    update = body.model_dump(exclude_none=True)
+    if not update:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No fields provided for update",
+        )
+
+    return await service.update(id, body=body, partner=partner)
 
 
-@router.delete("/delete")
-async def delete_shipment(id: UUID, service: ServiceDep):
-    return await service.delete(id=id)
+# test {}
+@router.get("/cancel", response_model=ShipmentRead)
+async def cancel_shipment(id: UUID, service: ServiceDep, seller: SellerDep2):
+    return await service.cancel(id=id, seller=seller)
     # return {"Detail": f"Shipment with #{id} has been deleted Successfully"}

@@ -14,10 +14,11 @@ class Role(str, Enum):
 class BaseSeller(BaseModel):
     name: str
     email: EmailStr
-    address: int
+    address: str | None
 
 
 class CreateSeller(BaseSeller):
+    zip_code: int
     password: str
     role: Role = Field(default=Role.seller)
 
