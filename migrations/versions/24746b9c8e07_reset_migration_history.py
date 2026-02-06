@@ -1,8 +1,8 @@
-"""Added Client contact - {client_contact_email and client_contact_phone}
+"""reset migration history
 
-Revision ID: 267917829d9f
-Revises: 5a4d6fc75253
-Create Date: 2026-02-05 10:18:14.015651
+Revision ID: 24746b9c8e07
+Revises: 
+Create Date: 2026-02-06 17:34:24.468999
 
 """
 from typing import Sequence, Union
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '267917829d9f'
-down_revision: Union[str, Sequence[str], None] = '5a4d6fc75253'
+revision: str = '24746b9c8e07'
+down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
