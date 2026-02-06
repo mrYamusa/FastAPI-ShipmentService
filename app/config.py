@@ -35,7 +35,26 @@ class TokenSettings(BaseSettings):
     model_config = _base_config
 
 
+# from app.utils import TEMPLATES_DIR
+class NotificationSettings(BaseSettings):
+    MAIL_USERNAME: str
+    MAIL_FROM: str
+    MAIL_PASSWORD: str
+    MAIL_PORT: int
+    MAIL_SERVER: str
+
+    MAIL_FROM_NAME: str
+    MAIL_STARTTLS: bool = True
+    MAIL_SSL_TLS: bool = False
+    VALIDATE_CERTS: bool = True
+    USE_CREDENTIALS: bool = True
+    # TEMPLATE_FOLDER: str = f"{TEMPLATES_DIR}"
+
+    model_config = _base_config
+
+
 database_settings = Databasesettings()
 token_settings = TokenSettings()
+notification_settings = NotificationSettings()
 # print(settings.POSTGRES_DB)
 # print(settings.POSTGRES_PORT)

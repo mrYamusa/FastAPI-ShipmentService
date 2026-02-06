@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from app.core.security import oauth2_scheme_seller
 from typing import Annotated
 from fastapi import Depends
@@ -20,7 +21,10 @@ def encode_token(data: dict, expiry=timedelta(minutes=token_settings.EXP_TIME)) 
     return token
 
 
-from fastapi import HTTPException, status
+from pathlib import Path
+
+APP_DIR = Path(__file__).parent
+TEMPLATES_DIR = APP_DIR / "templates"
 
 
 async def decode_token(token: Annotated[str, Depends(oauth2_scheme_seller)]):

@@ -64,6 +64,8 @@ class Shipments(SQLModel, table=True):
     timeline: list["ShipmentEvent"] = Relationship(
         back_populates="shipment", sa_relationship_kwargs={"lazy": "selectin"}
     )
+    client_contact_email: EmailStr
+    client_contact_phone: int | None = Field(default=None)
 
     @property
     def status(self):

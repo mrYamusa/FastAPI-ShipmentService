@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.services.shipment_event import ShipmentEventService
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, BackgroundTasks
 from app.database.session import create_session
 from app.database.redis import check_if_blacklisted
 from typing import Annotated
@@ -26,11 +26,11 @@ items in database. here we pass in that session as a dependency
 """
 
 
-def get_shipment_service(session: SessionDep):
+def get_shipment_service(session: SessionDep, tasks: BackgroundTasks):
     return ShipmentService(
         session=session,
         partner_service=DeliveryPartnerService(session=session),
-        event_service=ShipmentEventService(session=session),
+        event_service=ShipmentEventService(session=session, tasks=tasks),
     )
 
 

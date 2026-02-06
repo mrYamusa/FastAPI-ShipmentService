@@ -83,15 +83,16 @@ class ShipmentService(BaseService):
             shipment=shipment_instance
         )
         shipment_instance.delivery_partner_id = partner.id
+        ship = await self._create(shipment_instance)
         await self.event_service.add(
-            shipment=shipment_instance,
+            shipment=ship,
             location=seller.zip_code,
             status=ShipmentStatus.placed,
             description=f"Shipment placed at seller location {seller.zip_code}\nAssigned to delivery partner {partner.name}",
         )
 
         print(panel.Panel(f"{seller.id}", style="blue"))
-        return await self._create(shipment_instance)
+        return ship
 
     async def delete(self, id: UUID):
         shipment_item = await self.get(id)
@@ -109,8 +110,7 @@ class ShipmentService(BaseService):
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Not Authorized to Cancel Shipment",
             )
-        event = await self.event_service.add(
-            shipment=shipment, status=ShipmentStatus.cancelled
-        )
+        # event = await self.event_service.add(
+        await self.event_service.add(shipment=shipment, status=ShipmentStatus.cancelled)
         # shipment.timeline.append(event)
         return shipment

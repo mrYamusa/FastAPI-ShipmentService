@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cancelled - FastShip</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body,
+      table,
+      td,
+      a {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+      table,
+      td {
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+      }
+      img {
+        -ms-interpolation-mode: bicubic;
+        border: 0;
+        height: auto;
+        line-height: 100%;
+        outline: none;
+        text-decoration: none;
+      }
+      table {
+        border-collapse: collapse !important;
+      }
+      body {
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        background-color: #1a1a1a;
+        color: #e0e0e0;
+        font-family: "Ubuntu", Helvetica, Arial, sans-serif;
+      }
+
+      .hex-container {
+        background-color: #2d2d2d;
+        margin: 0 auto;
+        position: relative;
+        clip-path: polygon(10% 0, 100% 0, 100% 100%, 0% 100%, 0 10%);
+        border-radius: 20px 20px 20px 0;
+      }
+
+      /* ALERT RED ACCENT */
+      .highlight {
+        color: #e53935;
+        font-weight: 700;
+      }
+      .button {
+        background-color: #e53935;
+        color: #ffffff;
+        padding: 12px 24px;
+        text-decoration: none;
+        border-radius: 4px;
+        font-weight: 700;
+        display: inline-block;
+      }
+      .button:hover {
+        background-color: #d32f2f;
+      }
+
+      @media screen and (max-width: 600px) {
+        .email-container {
+          width: 100% !important;
+        }
+        .hex-container {
+          clip-path: none;
+          border-radius: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body style="margin: 0; padding: 0; background-color: #1a1a1a">
+    <table
+      role="presentation"
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      width="100%"
+      style="background-color: #1a1a1a"
+    >
+      <tr>
+        <td align="center" style="padding: 40px 10px">
+          <table
+            role="presentation"
+            class="email-container"
+            border="0"
+            cellpadding="0"
+            cellspacing="0"
+            width="600"
+            style="max-width: 600px"
+          >
+            <tr>
+              <td align="center" style="padding-bottom: 30px">
+                <table
+                  role="presentation"
+                  border="0"
+                  cellpadding="0"
+                  cellspacing="0"
+                >
+                  <tr>
+                    <td style="vertical-align: middle; padding-right: 15px">
+                      <img
+                        src="https://fastapi.tiangolo.com/img/logo-margin/logo-teal.png"
+                        alt="FastAPI Logo"
+                        width="60"
+                        style="display: block"
+                      />
+                    </td>
+                    <td
+                      style="
+                        vertical-align: middle;
+                        font-size: 32px;
+                        font-weight: 700;
+                        color: #ffffff;
+                        letter-spacing: 1px;
+                      "
+                    >
+                      Fast<span style="color: #009688">Ship</span>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="hex-container"
+                style="
+                  background-color: #262626;
+                  padding: 40px;
+                  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+                "
+              >
+                <table
+                  role="presentation"
+                  border="0"
+                  cellpadding="0"
+                  cellspacing="0"
+                  width="100%"
+                >
+                  <tr>
+                    <td style="text-align: center; padding-bottom: 20px">
+                      <h1
+                        style="
+                          margin: 0;
+                          font-size: 26px;
+                          color: #ffffff;
+                          font-weight: 700;
+                        "
+                      >
+                        Shipment Cancelled 🛑
+                      </h1>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style="
+                        color: #b0b0b0;
+                        font-size: 16px;
+                        line-height: 1.6;
+                        padding-bottom: 25px;
+                        text-align: center;
+                      "
+                    >
+                      Hello <span class="highlight">{{ seller_name }}</span>,
+                      <br /><br />
+                      The shipment for
+                      <strong style="color: #ffffff">{{ content }}</strong> has
+                      been cancelled.
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      style="
+                        background-color: #333333;
+                        border-radius: 8px;
+                        padding: 25px;
+                        margin-bottom: 20px;
+                        border-left: 4px solid #e53935;
+                      "
+                    >
+                      <table
+                        role="presentation"
+                        border="0"
+                        cellpadding="0"
+                        cellspacing="0"
+                        width="100%"
+                      >
+                        <tr>
+                          <td
+                            style="
+                              color: #e53935;
+                              font-size: 12px;
+                              text-transform: uppercase;
+                              letter-spacing: 1px;
+                              padding-bottom: 5px;
+                              font-weight: 700;
+                            "
+                          >
+                            Shipment ID
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            style="
+                              color: #ffffff;
+                              font-size: 20px;
+                              font-family: &quot;Ubuntu Mono&quot;, monospace;
+                              padding-bottom: 20px;
+                            "
+                          >
+                            #{{ id }}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td
+                            style="
+                              color: #e53935;
+                              font-size: 12px;
+                              text-transform: uppercase;
+                              letter-spacing: 1px;
+                              padding-bottom: 5px;
+                              font-weight: 700;
+                            "
+                          >
+                            Destination
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="color: #ffffff; font-size: 17px">
+                            {{ destination }}
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td align="center" style="padding-top: 35px">
+                      <a href="#" class="button" style="color: #ffffff"
+                        >Contact Support</a
+                      >
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td
+                align="center"
+                style="padding-top: 30px; color: #666666; font-size: 12px"
+              >
+                <p style="margin: 0">
+                  &copy; 2026 FastShip Inc. Powered by FastAPI.
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

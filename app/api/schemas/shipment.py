@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, EmailStr
 from random import randint
 from datetime import datetime, timedelta
 from app.api.schemas.seller import BaseSeller
@@ -6,7 +6,7 @@ from app.database.models import ShipmentEvent, ShipmentStatus
 
 
 def random_destination():
-    return randint(11000, 11999)
+    return randint(11000, 11009)
 
 
 def delivery_date(est_time: int = 3):
@@ -39,6 +39,11 @@ class ShipmentCreate(BaseShipments):
     )
     destination: int | None = Field(
         default_factory=random_destination, description="Delivery location"
+    )
+    client_contact_email: EmailStr = Field(description="Client [Sellers] contact email")
+    client_contact_phone: int | None = Field(
+        description="Client [Sellers] contact phone number",
+        default=None,
     )
 
 
